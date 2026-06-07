@@ -10,7 +10,7 @@ To try FlowForge, first clone this project to your local machine. After that, in
   <img width="300" src="https://github.com/user-attachments/assets/167de616-c5a4-48a9-8b7a-e7fe7aa19ebf" />
 </p>
 
-Finally, open the terminal in the folder location and run the following commands:
+Finally, open the terminal in the folder location and run the following commands to install [gpt4all](https://pypi.org/project/gpt4all/):
 
 
 ```
@@ -20,7 +20,7 @@ Finally, open the terminal in the folder location and run the following commands
 
 After setup, launch `run_flow_forge.bat`.
 
-Alternatively, you can download the standalone version of this project with everything already installed and ready to use [here](.).
+Alternatively, you can download the standalone version of this project with everything already installed and ready to use [here](https://github.com/felipebottega/FlowForge/releases/tag/v0.1.0).
 
 ## Core Philosophy
 This project was built to solve the "prototyping gap", where many AI implementations fail to move from a chat-interface demo to a reliable, production-ready system. FlowForge emphasizes:
@@ -47,12 +47,6 @@ FlowForge operates on a robust data-flow cycle:
 2.  **Schema Validation:** Pydantic models validate the structure before execution, preventing invalid workflows.
 3.  **Job Orchestration:** FastAPI dispatches jobs to ComfyUI, managing status updates via asynchronous queues.
 4.  **Feedback Loop:** Results are captured, logged, and surfaced to the UI with download capabilities.
-
-## Key Engineering Differentiators
-* **Schema-First Validation:** Ensures that the LLM's output is consistently executable, minimizing runtime failures.
-* **Asynchronous Job Handling:** Robust queuing mechanism to process high-compute rendering tasks without blocking the application.
-* **Versioned Workflows:** Separation and versioning of ComfyUI pipelines for different media types (image vs. video).
-* **Observability & Debugging:** Comprehensive logs that capture the prompt, JSON state, execution errors, and final output metadata.
 
 ## Roadmap
 - [x] Schema Design & Contract Definition
