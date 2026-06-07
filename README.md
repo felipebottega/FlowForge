@@ -18,6 +18,8 @@ Finally, open the terminal in the folder location and run the following commands
 .\ComfyUI_windows_portable\python_embeded\python.exe -m pip install gpt4all requests
 ```
 
+After setup, launch `run_flow_forge.bat`.
+
 Alternatively, you can download the standalone version of this project with everything already installed and ready to use [here](.).
 
 ## Core Philosophy
