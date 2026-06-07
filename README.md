@@ -56,7 +56,7 @@ FlowForge operates on a robust data-flow cycle:
 
 ## Roadmap
 - [x] Schema Design & Contract Definition
-- [ ] LLM Prompt Engineering & Parser Logic
+- [x] LLM Prompt Engineering & Parser Logic
 - [ ] Backend API (FastAPI) & Job Orchestration
 - [ ] ComfyUI Integration (Image/Video workflows)
 - [ ] React Interface (Chat/Preview/Download)
