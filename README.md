@@ -10,10 +10,11 @@ To try FlowForge, first clone this project to your local machine. After that, in
   <img width="300" src="https://github.com/user-attachments/assets/167de616-c5a4-48a9-8b7a-e7fe7aa19ebf" />
 </p>
 
-Finally, open the terminal in the folder location and run the following commands to install [gpt4all](https://pypi.org/project/gpt4all/):
+Finally, open the terminal in the folder location and run the following commands to install [FastAPI](https://fastapi.tiangolo.com/) and [gpt4all](https://pypi.org/project/gpt4all/):
 
 
 ```
+.\ComfyUI_windows_portable\python_embeded\python.exe -m pip install "fastapi[standard]"
 .\ComfyUI_windows_portable\python_embeded\python.exe -m pip install -U "gpt4all[cuda]"
 .\ComfyUI_windows_portable\python_embeded\python.exe -m pip install gpt4all requests
 ```
