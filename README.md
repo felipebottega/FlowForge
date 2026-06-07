@@ -2,6 +2,24 @@
 
 FlowForge translates natural language into ComfyUI execution. It functions as an intelligent layer that validates requirements and orchestrates image and video rendering end-to-end, removing manual bottlenecks.
 
+## Installation
+
+To try FlowForge, first clone this project to your local machine. After that, install the ComfyUI Window Portable version inside the project folder [direct download link here](https://github.com/comfyanonymous/ComfyUI/releases/latest/download/ComfyUI_windows_portable_nvidia.7z). The folder should have the structure shown below.
+
+<p align="center">
+  <img width="300" src="https://github.com/user-attachments/assets/167de616-c5a4-48a9-8b7a-e7fe7aa19ebf" />
+</p>
+
+Finally, open the terminal in the folder location and run the following commands:
+
+
+```
+	.\ComfyUI_windows_portable\python_embeded\python.exe -m pip install -U "gpt4all[cuda]"
+	.\ComfyUI_windows_portable\python_embeded\python.exe -m pip install gpt4all requests
+```
+
+Alternatively, you can download the standalone version with everything already installed and ready to use [here].
+
 ## Core Philosophy
 This project was built to solve the "prototyping gap", where many AI implementations fail to move from a chat-interface demo to a reliable, production-ready system. FlowForge emphasizes:
 
