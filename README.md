@@ -14,11 +14,11 @@ Finally, open the terminal in the folder location and run the following commands
 
 
 ```
-	.\ComfyUI_windows_portable\python_embeded\python.exe -m pip install -U "gpt4all[cuda]"
-	.\ComfyUI_windows_portable\python_embeded\python.exe -m pip install gpt4all requests
+.\ComfyUI_windows_portable\python_embeded\python.exe -m pip install -U "gpt4all[cuda]"
+.\ComfyUI_windows_portable\python_embeded\python.exe -m pip install gpt4all requests
 ```
 
-Alternatively, you can download the standalone version with everything already installed and ready to use [here].
+Alternatively, you can download the standalone version with everything already installed and ready to use [here](.).
 
 ## Core Philosophy
 This project was built to solve the "prototyping gap", where many AI implementations fail to move from a chat-interface demo to a reliable, production-ready system. FlowForge emphasizes:
