@@ -4,9 +4,11 @@ This module initializes the API and defines the initial orchestration routes.
 """
 from fastapi import FastAPI
 from .schemas.request_schema import WorkflowRequest
+from .api.endpoints import router as api_router
 
 
 app = FastAPI(title="FlowForge API")
+app.include_router(api_router, prefix="/api")
 
 
 @app.get("/")
@@ -17,8 +19,8 @@ def health_check():
 
     return {"status": "FlowForge API is operational"}
 
-@app.post("/generate")
-async def start_generation(request: WorkflowRequest):
+@app.post("/test_generation")
+async def test_generation(request: WorkflowRequest):
     """
     Receives the prompt and prepares it for the orchestration layer. For now, it confirms receipt of the data before we 
     link the services.
