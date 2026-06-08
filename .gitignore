@@ -3,21 +3,28 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-
 .venv/
 venv/
 env/
-
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 
-# AI stuff
+# Frontend (React / Vite)
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# AI Assets & Portables
+ComfyUI_windows_portable/
 *.gguf
 *.safetensors
-ComfyUI_windows_portable/
 
-# logs
+# Logs
 *.log
 
 # System files

@@ -63,6 +63,7 @@ async def generate_refined_prompt(user_input: str) -> str:
         
     try:
         data = json.loads(response)
+        print(f"[FlowForge] LLM success: {response}")
         return data.get("positive_prompt", "")
     except json.JSONDecodeError:
         print(f"[FlowForge] Error: LLM failed the structural JSON contract: {response}")

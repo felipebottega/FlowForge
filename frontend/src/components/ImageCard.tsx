@@ -1,6 +1,5 @@
 /**
- * ImageCard.tsx - Enhanced for MVP.
- * Displays the result, the LLM's technical refinement, and detailed errors.
+ * ImageCard.tsx - Displays the result and the technical refinement.
  */
 import React from 'react';
 
@@ -8,10 +7,12 @@ interface ImageCardProps {
   imageUrl: string | null;
   status: 'idle' | 'processing' | 'finished' | 'error';
   refinedPrompt?: string | null;
-  errorDetails?: string | null; // Added for better feedback
+  errorDetails?: string | null;
 }
 
 const ImageCard: React.FC<ImageCardProps> = ({ imageUrl, status, refinedPrompt, errorDetails }) => {
+  if (status === 'idle') return null;
+
   const handleDownload = () => {
     if (imageUrl) {
       const link = document.createElement('a');
@@ -21,11 +22,9 @@ const ImageCard: React.FC<ImageCardProps> = ({ imageUrl, status, refinedPrompt, 
     }
   };
 
-  if (status === 'idle') return null;
-
   return (
     <div className="w-full max-w-2xl bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl transition-all">
-      {/* Refined Prompt Section - The "Brain" output */}
+      {/* Refined Prompt Section */}
       {refinedPrompt && (
         <div className="p-4 bg-zinc-800/50 border-b border-zinc-800">
           <p className="text-xs text-blue-400 font-mono uppercase mb-2">Refined Technical Prompt:</p>
@@ -33,7 +32,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ imageUrl, status, refinedPrompt, 
         </div>
       )}
 
-      {/* Main Content Area */}
+      {/* Media Display Area */}
       <div className="aspect-square w-full flex items-center justify-center bg-zinc-950 relative group">
         {status === 'processing' && (
           <div className="flex flex-col items-center gap-3">
@@ -66,3 +65,5 @@ const ImageCard: React.FC<ImageCardProps> = ({ imageUrl, status, refinedPrompt, 
     </div>
   );
 };
+
+export default ImageCard;
