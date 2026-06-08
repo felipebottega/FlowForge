@@ -1,3 +1,4 @@
+import os
 import httpx
 from fastapi import APIRouter, HTTPException
 from backend.app.schemas.request_schema import WorkflowRequest
@@ -6,6 +7,13 @@ from backend.app.services.comfy_service import clear_output_directory, submit_wo
 
 
 router = APIRouter()
+
+
+
+# Define internal paths relative to the project root directory.
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
+COMFY_OUTPUT_PATH = os.path.join(PROJECT_ROOT, "ComfyUI_windows_portable", "ComfyUI", "output")
 
 
 @router.post("/generate")
@@ -42,6 +50,7 @@ async def check_status(prompt_id: str):
     """
     Verifies in ComfyUI if the image generation has been completed, extracting the filename to build the final URL.
     """
+    
     async with httpx.AsyncClient() as client:
         try:
             # Consult the history of ComfyUI.
@@ -49,7 +58,7 @@ async def check_status(prompt_id: str):
             response.raise_for_status()
             history = response.json()
             
-            if prompt_id in history and "outputs" in history[prompt_id]:
+            if len(os.listdir(COMFY_OUTPUT_PATH)) > 1 and prompt_id in history and "outputs" in history[prompt_id]:
                 outputs = history[prompt_id]["outputs"]
                 image_filename = None
                 
