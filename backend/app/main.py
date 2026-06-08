@@ -6,13 +6,15 @@ import os
 import httpx
 from tqdm import tqdm
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from .api.endpoints import router as api_router
 from fastapi.middleware.cors import CORSMiddleware
 
 
+# API initialization with a descriptive title for documentation purposes.
 app = FastAPI(title="FlowForge API")
 
-# Define the list of origins allowed to access the API, Usually http://localhost:5173 for Vite.
+# Define the list of origins allowed to access the API, usually http://localhost:5173 for Vite.
 origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
 # Adding the middleware to the application.
@@ -35,9 +37,14 @@ PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", ".."))
 MODEL_NAME = "deepseek-llm-7b-chat.Q4_K_M.gguf"
 MODEL_PATH = os.path.join(PROJECT_ROOT, "llm_models", MODEL_NAME)
 
-COMFYUI_PATH = os.path.join(PROJECT_ROOT, "ComfyUI_windows_portable", "ComfyUI", "models")
-CHECKPOINT_PATH = os.path.join(COMFYUI_PATH, "checkpoints", "CyberRealisticPony_V18.0_F16.safetensors")
-LORA_PATH = os.path.join(COMFYUI_PATH, "loras", "zy_Realism_Enhancer_v2.safetensors")
+# Points to the directory where ComfyUI saves the outputs
+COMFY_OUTPUT_PATH = os.path.join(PROJECT_ROOT, "ComfyUI_windows_portable", "ComfyUI", "output")
+COMFYUI_MODELS_PATH = os.path.join(PROJECT_ROOT, "ComfyUI_windows_portable", "ComfyUI", "models")
+CHECKPOINT_PATH = os.path.join(COMFYUI_MODELS_PATH, "checkpoints", "CyberRealisticPony_V18.0_F16.safetensors")
+LORA_PATH = os.path.join(COMFYUI_MODELS_PATH, "loras", "zy_Realism_Enhancer_v2.safetensors")
+
+# Mounts the output folder so files are accessible at http://localhost:8000/outputs/.
+app.mount("/outputs", StaticFiles(directory=COMFY_OUTPUT_PATH), name="outputs")
 
 
 def download_missing_file(destination_path: str, url: str):

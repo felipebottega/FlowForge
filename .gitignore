@@ -12,10 +12,6 @@ env/
 .mypy_cache/
 .ruff_cache/
 
-# Environment / configs
-.env
-.env.*
-
 # AI stuff
 *.gguf
 *.safetensors

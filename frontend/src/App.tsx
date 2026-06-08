@@ -3,18 +3,18 @@
  * Handles the generation lifecycle: Input -> Submission -> Polling -> Display.
  */
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import PromptForm from './components/PromptForm';
 import ImageCard from './components/ImageCard';
-import { GenerationResponse, StatusResponse } from './types/JobResponse';
+import { workflowApi } from './services/api';
 
 const App: React.FC = () => {
-  // State management for the generation flow
   const [loading, setLoading] = useState<boolean>(false);
   const [promptId, setPromptId] = useState<string | null>(null);
-  const [status, setStatus] = useState<'idle' | 'processing' | 'finished' | 'error'>('idle');
+  const [workflowStatus, setWorkflowStatus] = useState<'idle' | 'processing' | 'finished' | 'error'>('idle');
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [refinedPrompt, setRefinedPrompt] = useState<string | null>(null);
+  // Holds technical error information from the backend
+  const [errorDetails, setErrorDetails] = useState<string | null>(null);
 
   /**
    * Polling effect: Watches the promptId and status.
@@ -23,54 +23,52 @@ const App: React.FC = () => {
   useEffect(() => {
     let pollInterval: NodeJS.Timeout;
 
-    if (status === 'processing' && promptId) {
+    if (workflowStatus === 'processing' && promptId) {
       pollInterval = setInterval(async () => {
         try {
-          const response = await axios.get<StatusResponse>(`/api/status/${promptId}`);
+          const data = await workflowApi.getStatus(promptId);
           
-          if (response.data.status === 'finished') {
-            setImageUrl(response.data.image_url || null);
-            setStatus('finished');
+          if (data.status === 'finished' && data.image_url) {
+            setImageUrl(data.image_url);
+            setWorkflowStatus('finished');
             setLoading(false);
             clearInterval(pollInterval);
-          } else if (response.data.status === 'error') {
-            setStatus('error');
+          } else if (data.status === 'error') {
+            setWorkflowStatus('error');
+            // Captures detailed feedback if available in the response
+            setErrorDetails(data.error_details || "Unknown execution error");
             setLoading(false);
             clearInterval(pollInterval);
           }
-        } catch (error) {
-          console.error("Polling error:", error);
-          setStatus('error');
-          setLoading(false);
-          clearInterval(pollInterval);
+        } catch (err) {
+          console.error("Polling error:", err);
         }
-      }, 3000); // Poll every 3 seconds
+      }, 3000); // Check every 3 seconds
     }
 
     return () => {
       if (pollInterval) clearInterval(pollInterval);
     };
-  }, [promptId, status]);
+  }, [promptId, workflowStatus]);
 
   /**
    * Submits the user prompt to the FastAPI orchestrator.
    */
   const handleForge = async (userPrompt: string) => {
-    setLoading(true);
-    setStatus('processing');
-    setImageUrl(null);
-    setRefinedPrompt(null);
-
     try {
-      const response = await axios.post<GenerationResponse>('/api/generate', {
-        prompt: userPrompt
-      });
+      setLoading(true);
+      setWorkflowStatus('processing');
+      setImageUrl(null);
+      setRefinedPrompt(null);
+      setErrorDetails(null);
 
-      setPromptId(response.data.prompt_id);
-      setRefinedPrompt(response.data.refined_prompt);
+      const data = await workflowApi.generate(userPrompt);
+      setPromptId(data.prompt_id);
+      setRefinedPrompt(data.refined_prompt);
     } catch (error) {
-      console.error("Submission error:", error);
-      setStatus('error');
+      console.error("Forge initiation failed:", error);
+      setWorkflowStatus('error');
+      setErrorDetails("Failed to connect to the orchestration server.");
       setLoading(false);
     }
   };
@@ -86,29 +84,20 @@ const App: React.FC = () => {
           <p className="text-xs text-zinc-500 uppercase tracking-widest">LLM Orchestrator for ComfyUI</p>
         </div>
         <div className="flex items-center gap-3">
-          <div className={`w-2 h-2 rounded-full ${status === 'processing' ? 'bg-yellow-500 animate-pulse' : status === 'finished' ? 'bg-green-500' : 'bg-zinc-700'}`} />
-          <span className="text-xs font-mono text-zinc-400">{status.toUpperCase()}</span>
+          <div className={`w-2 h-2 rounded-full ${workflowStatus === 'processing' ? 'bg-yellow-500 animate-pulse' : workflowStatus === 'finished' ? 'bg-green-500' : 'bg-zinc-700'}`} />
+          <span className="text-xs font-mono text-zinc-400">{workflowStatus.toUpperCase()}</span>
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="max-w-6xl mx-auto p-8 flex flex-col items-center gap-12">
-        <section className="w-full flex flex-col items-center gap-6">
-          <div className="text-center space-y-2">
-            <h2 className="text-4xl font-black text-white">FORGE YOUR VISION</h2>
-            <p className="text-zinc-400">Describe your idea, and our LLM will refine the technical workflow.</p>
-          </div>
-          
-          <PromptForm onForge={handleForge} isLoading={loading} />
-        </section>
-
-        <section className="w-full flex justify-center pb-20">
-          <ImageCard 
-            imageUrl={imageUrl} 
-            status={status} 
-            refinedPrompt={refinedPrompt} 
-          />
-        </section>
+        <PromptForm onForge={handleForge} isLoading={loading} />
+        
+        <ImageCard 
+          imageUrl={imageUrl} 
+          status={workflowStatus} 
+          refinedPrompt={refinedPrompt}
+          errorDetails={errorDetails} 
+        />
       </main>
     </div>
   );
