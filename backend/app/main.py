@@ -7,7 +7,6 @@ import httpx
 from tqdm import tqdm
 from fastapi import FastAPI
 from .api.endpoints import router as api_router
-from .schemas.request_schema import WorkflowRequest
 
 
 app = FastAPI(title="FlowForge API")
@@ -47,20 +46,26 @@ def download_missing_file(destination_path: str, url: str):
     os.makedirs(os.path.dirname(destination_path), exist_ok=True)
     
     # timeout=None guarantees the connection won't drop during huge file transfers.
-    with httpx.Client(follow_redirects=True, timeout=None) as client:
-        with client.stream("GET", url) as response:
-            # Replicates requests.raise_for_status() behavior.
-            response.raise_for_status()
-            
-            total_size = int(response.headers.get("content-length", 0))
-            
-            with open(destination_path, "wb") as f:
-                with tqdm(desc=filename, total=total_size, unit="iB", unit_scale=True, unit_divisor=1024) as bar:
-                    # Restored the original efficient 1MB chunk allocation size.
-                    for chunk in response.iter_bytes(chunk_size=1024 * 1024):
-                        if chunk:
-                            size = f.write(chunk)
-                            bar.update(size)
+    try:
+        with httpx.Client(follow_redirects=True, timeout=None) as client:
+            with client.stream("GET", url) as response:
+                # Replicates requests.raise_for_status() behavior.
+                response.raise_for_status()
+                
+                total_size = int(response.headers.get("content-length", 0))
+                
+                with open(destination_path, "wb") as f:
+                    with tqdm(desc=filename, total=total_size, unit="iB", unit_scale=True, unit_divisor=1024) as bar:
+                        # Restored the original efficient 1MB chunk allocation size.
+                        for chunk in response.iter_bytes(chunk_size=1024 * 1024):
+                            if chunk:
+                                size = f.write(chunk)
+                                bar.update(size)
+    except Exception as e:
+        if os.path.exists(destination_path):
+            os.remove(destination_path)
+        print(f"[FlowForge] Automated download failed: {e}")
+        raise e
                             
     print(f"[FlowForge] Successfully downloaded and verified: {filename}")
 
@@ -102,12 +107,3 @@ def health_check():
     """
 
     return {"status": "FlowForge API is operational"}
-
-@app.post("/test_generation")
-async def test_generation(request: WorkflowRequest):
-    """
-    Receives the prompt and prepares it for the orchestration layer. For now, it confirms receipt of the data before we 
-    link the services.
-    """
-
-    return {"message": "Prompt received successfully", "data": {"prompt": request.prompt}}

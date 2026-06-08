@@ -12,19 +12,26 @@ MODEL_PATH = os.path.join(PROJECT_ROOT, "llm_models")
 MODEL_NAME = "deepseek-llm-7b-chat.Q4_K_M.gguf"
 INTERPRETER_DIRECTIVES = """
 1. Context: Expert Prompt Engineering for Stable Diffusion (SDXL).
-2. Task: Transform natural language into an enriched sequence of **atomic technical tags**.
-3. Scene Enrichment: Enhance requests with vivid adjectives, technical lighting (e.g., "rim lighting", "global illumination"), and rendering specs (e.g., "octane render", "8k resolution").
-4. Weighting Order: Primary Subject MUST be the first tag. Structure: [Subject], [Subject Details], [Background], [Environment/Lighting], [Camera/Technical Style].
-5. Forbidden: NO sentences. NO verbs. NO prepositions. NO articles. NO conjunctions (and, with, or, but). Use ONLY nouns and adjectives.
-6. Technical Fidelity: If the request implies realism, include camera specs (e.g., "depth of field", "sharp focus", "f/1.8").
-7. Format: Return ONLY a JSON object: {"positive_prompt": "tags, separated, by, commas"}.
-8. Syntax: NEVER use backslashes (\\) or internal quotes ("). Use ONLY commas as separators.
-9. Examples:
+2. Task: Transform natural language into a highly enriched sequence of **atomic technical tags**.
+3. CRITICAL MANDATE (Extraction): You MUST extract and preserve ALL primary entities, objects, items, and actions mentioned in the input. DO NOT discard, generalize, or omit core subjects, weapons, held items, or specific actions.
+4. Tag Density & Length: You MUST expand the input into 25 to 30 distinct atomic tags. Break down every element to maximize descriptive detail.
+5. Semantic Fidelity: PRESERVE the core vocabulary and keywords provided by the user. 
+   If the user uses "big sword", keep "big sword" in the prompt. 
+   Expand with technical specs, but NEVER distort the user's base intent or primary keywords.
+6. CRITICAL MANDATE: Extract and preserve ALL primary entities. DO NOT generalize user input.
+7. Weighting Order: Primary Subject AND their held items/actions MUST be the first tags. 
+   Strict structure: [User's Subject + Action/Item], [Micro Subject Details/Materials], [Clothing/Texture specs], [Background elements], [Atmosphere/Environment], [Lighting style], [Camera/Technical Lens Specs].
+8. Scene Enrichment: Deconstruct requests into micro-details: architectural textures, material types, specific color gradients, atmospheric effects, cinematic technical lighting (e.g., "volumetric rim lighting", "global illumination"), and rendering specs (e.g., "octane render", "unreal engine 5 look", "8k resolution").
+9. Forbidden: NO sentences. NO verbs. NO prepositions. NO articles. NO conjunctions (and, with, or, but). Use ONLY nouns and adjectives.
+10. Technical Fidelity: Include detailed camera specs to simulate realism (e.g., "shutter speed 1/1000", "bokeh", "depth of field", "sharp focus", "f/1.8 lens", "shot on 35mm film").
+11. Format: Return ONLY a JSON object: {"positive_prompt": "tags, separated, by, commas"}.
+12. Syntax: NEVER use backslashes (\\) or internal quotes ("). Use ONLY commas as separators.
+13. Constraint: No preamble, no explanations. Output ONLY the JSON.
+14. Dense Examples (Strictly mirror this length and format):
    Input: "A cat in space"
-   Output: {"positive_prompt": "majestic fluffy cat, zero gravity, space void, colorful nebulas, distant stars, ethereal rim lighting, cinematic composition, hyper-detailed, masterpiece"}
-   Input: "Cyber-wizard in a neon city"
-   Output: {"positive_prompt": "tiny cyber-wizard, intricate technological robes, electric blue spells, futuristic neon alley, rain-slicked pavement, lightning reflections, cyberpunk atmosphere, depth of field, high contrast, ray tracing"}
-10. Constraint: No preamble, no explanations. Output ONLY the JSON.
+   Output: {"positive_prompt": "majestic fluffy cat, thick white fur, glowing green eyes, detailed space suit, metallic visor, gold reflections, zero gravity, floating weightless, space void, cosmic dust, colorful nebulas, vibrant interstellar gas, distant galaxies, hyper-detailed stars, ethereal rim lighting, cosmic glow, cinematic composition, wide-angle lens, sharp focus, ray tracing, octane render, masterpiece, 8k"}
+   Input: "A medieval knight holding a big sword"
+   Output: {"positive_prompt": "medieval knight holding massive steel greatsword, heroic stance, detailed steel plate mail, embossed silver crests, flowing crimson cape, battlefield hilltop, sunset sky, fiery orange purple gradients, volumetric dust, golden hour lighting, cinematic rim light, rugged terrain, wide-angle lens, sharp focus, f/1.8 aperture, hyper-realistic textures, 8k resolution, photorealistic, masterpiece, depth of field"}
 """
 
 # Create the global variable.
@@ -58,4 +65,5 @@ async def generate_refined_prompt(user_input: str) -> str:
         data = json.loads(response)
         return data.get("positive_prompt", "")
     except json.JSONDecodeError:
-        return response
+        print(f"[FlowForge] Error: LLM failed the structural JSON contract: {response}")
+        return None

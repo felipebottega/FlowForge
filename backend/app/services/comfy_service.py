@@ -9,14 +9,18 @@ import httpx
 
 # Server configuration from repository constants
 COMFY_URL = "http://127.0.0.1:8188"
-WORKFLOW_PATH = "workflows_api/txt2img.json"
+
+# Resolve path dynamically using the project root directory
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
+WORKFLOW_PATH = os.path.join(PROJECT_ROOT, "workflows_api", "txt2img.json")
 
 
 async def submit_workflow(prompt_text: str):
     """
     Loads the text-to-image workflow and submits it to the execution queue.
     """
-    
+
     if not os.path.exists(WORKFLOW_PATH):
         return {"error": "Workflow configuration file missing"}
 

@@ -1,8 +1,8 @@
 import httpx
 from fastapi import APIRouter, HTTPException
-from app.schemas.request_schema import WorkflowRequest
-from app.services.llm_service import generate_refined_prompt
-from app.services.comfy_service import submit_workflow, COMFY_URL
+from backend.app.schemas.request_schema import WorkflowRequest
+from backend.app.services.llm_service import generate_refined_prompt
+from backend.app.services.comfy_service import submit_workflow, COMFY_URL
 
 
 router = APIRouter()
