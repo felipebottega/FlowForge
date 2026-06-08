@@ -74,7 +74,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans selection:bg-blue-500/30">
       {/* Navigation Header */}
-      <header className="border-b border-zinc-800 p-6 flex justify-between items-center bg-zinc-900/50 backdrop-blur-md sticky top-0 z-10">
+      <header className="border-b border-zinc-800 p-2 flex justify-between items-center bg-zinc-900/50 backdrop-blur-md sticky top-0 z-10">
         <div>
           <h1 className="text-2xl font-bold tracking-tighter text-white">
             FLOW<span className="text-blue-500">FORGE</span>

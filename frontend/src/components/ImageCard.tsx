@@ -23,7 +23,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ imageUrl, status, refinedPrompt, 
   };
 
   return (
-    <div className="w-full max-w-2xl bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl transition-all">
+    <div className="w-full max-w-lg bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl transition-all">
       {/* Refined Prompt Section */}
       {refinedPrompt && (
         <div className="p-4 bg-zinc-800/50 border-b border-zinc-800">

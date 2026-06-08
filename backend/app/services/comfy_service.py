@@ -14,6 +14,7 @@ COMFY_URL = "http://127.0.0.1:8188"
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
 WORKFLOW_PATH = os.path.join(PROJECT_ROOT, "workflows_api", "txt2img.json")
+COMFY_OUTPUT_PATH = os.path.join(PROJECT_ROOT, "ComfyUI_windows_portable", "ComfyUI", "output")
 
 
 async def submit_workflow(prompt_text: str):
@@ -40,3 +41,21 @@ async def submit_workflow(prompt_text: str):
             return response.json()
         except httpx.RequestError as e:
             return {"error": f"Connection failed: {str(e)}"}
+        
+def clear_output_directory():
+    """
+    Remove all files from the outputs folder before a new generation.
+    """
+
+    if os.path.exists(COMFY_OUTPUT_PATH):
+
+        for filename in os.listdir(COMFY_OUTPUT_PATH):
+            file_path = os.path.join(COMFY_OUTPUT_PATH, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    if "_output_images_will_be_put_here" not in file_path:
+                        os.remove(file_path)
+            except Exception as e:
+                print(f"Error deleting {file_path}: {e}")
+
+    return

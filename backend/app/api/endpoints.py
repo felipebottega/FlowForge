@@ -2,7 +2,7 @@ import httpx
 from fastapi import APIRouter, HTTPException
 from backend.app.schemas.request_schema import WorkflowRequest
 from backend.app.services.llm_service import generate_refined_prompt
-from backend.app.services.comfy_service import submit_workflow, COMFY_URL
+from backend.app.services.comfy_service import clear_output_directory, submit_workflow, COMFY_URL
 
 
 router = APIRouter()
@@ -13,6 +13,9 @@ async def start_generation(request: WorkflowRequest):
     """
     Receives the initial prompt, uses LLM to generate the technical tags, and submits the flow for execution in ComfyUI.
     """
+
+    # Clear the outputs folder before anything else.
+    clear_output_directory()
 
     # Refine prompt via LLM.
     refined_prompt = await generate_refined_prompt(request.prompt)
@@ -37,9 +40,8 @@ async def start_generation(request: WorkflowRequest):
 @router.get("/status/{prompt_id}")
 async def check_status(prompt_id: str):
     """
-    Verifies in ComfyUI if the image generation has been completed, replacing the need for a sleep() in the backend.
+    Verifies in ComfyUI if the image generation has been completed, extracting the filename to build the final URL.
     """
-
     async with httpx.AsyncClient() as client:
         try:
             # Consult the history of ComfyUI.
@@ -48,9 +50,23 @@ async def check_status(prompt_id: str):
             history = response.json()
             
             if prompt_id in history and "outputs" in history[prompt_id]:
-                return {"status": "completed", "outputs": history[prompt_id]["outputs"]}
+                outputs = history[prompt_id]["outputs"]
+                image_filename = None
+                
+                for node_id, node_output in outputs.items():
+                    if "images" in node_output and len(node_output["images"]) > 0:
+                        image_filename = node_output["images"][0]["filename"]
+                        break
+                
+                if image_filename:
+                    return {
+                        "status": "finished", 
+                        "image_url": f"http://127.0.0.1:8000/outputs/{image_filename}"
+                    }
+                else:
+                    return {"status": "error", "error_details": "Image metadata missing in ComfyUI output."}
             else:
-                return {"status": "processing_or_queued"}
+                return {"status": "processing"}
                 
         except httpx.RequestError as e:
              raise HTTPException(status_code=500, detail=f"Failed communication with ComfyUI: {str(e)}")
