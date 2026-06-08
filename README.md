@@ -1,4 +1,17 @@
+<div align="center">
+  
 # FlowForge
+
+[![Release](https://img.shields.io/badge/release-v0.1.0-orange)](https://github.com/felipebottega/FlowForge/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat&logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-05998b?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+<br>
+[![CUDA](https://img.shields.io/badge/CUDA-GPU_Accelerated-green?style=flat&logo=nvidia&logoColor=white)](https://developer.nvidia.com/cuda-zone)
+[![ComfyUI](https://img.shields.io/badge/ComfyUI-000000?style=flat&logo=comfyui&logoColor=white)](https://github.com/comfyanonymous/ComfyUI)
+[![DeepSeek](https://img.shields.io/badge/LLM-DeepSeek-blue?style=flat&logo=deepseek&logoColor=white)](https://www.deepseek.com/)
+[![GPT4All](https://img.shields.io/badge/Engine-GPT4All-brightgreen?style=flat&logo=ai&logoColor=white)](https://gpt4all.io/)
+</div>
 
 FlowForge translates natural language into ComfyUI execution. It functions as an intelligent layer that validates requirements and orchestrates image and video rendering end-to-end, removing manual bottlenecks.
 
@@ -56,6 +69,3 @@ FlowForge operates on a robust data-flow cycle:
 - [ ] ComfyUI Integration (Image/Video workflows)
 - [ ] React Interface (Chat/Preview/Download)
 - [ ] Advanced Features: JSON Editor, A/B Variant Comparison, Auto-Correction
-
-## License
-MIT
