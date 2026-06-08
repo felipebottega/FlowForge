@@ -41,7 +41,7 @@ const App: React.FC = () => {
         } catch (err) {
           console.error("Polling synchronization error:", err);
         }
-      }, 3000); // Polls every 3 seconds
+      }, 5000); // Polls every 5 seconds
     }
 
     return () => {
