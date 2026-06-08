@@ -7,7 +7,12 @@ from gpt4all import GPT4All
 
 
 MODEL_NAME = "deepseek-llm-7b-chat.Q4_K_M.gguf"
-MODEL_PATH = "llm_models"
+
+# Dynamically map the external llm_models directory relative to this service file.
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
+MODEL_PATH = os.path.join(PROJECT_ROOT, "llm_models")
+MODEL_NAME = "deepseek-llm-7b-chat.Q4_K_M.gguf"
 INTERPRETER_DIRECTIVES = """
 1. Context: Expert Prompt Engineering for Stable Diffusion (SDXL).
 2. Task: Transform natural language into an enriched sequence of **atomic technical tags**.
