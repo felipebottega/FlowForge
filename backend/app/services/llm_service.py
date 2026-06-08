@@ -6,9 +6,6 @@ import json
 from gpt4all import GPT4All
 
 
-MODEL_NAME = "deepseek-llm-7b-chat.Q4_K_M.gguf"
-
-# Dynamically map the external llm_models directory relative to this service file.
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
 MODEL_PATH = os.path.join(PROJECT_ROOT, "llm_models")
@@ -30,23 +27,35 @@ INTERPRETER_DIRECTIVES = """
 10. Constraint: No preamble, no explanations. Output ONLY the JSON.
 """
 
-# Initializing the model on CUDA. 
-model = GPT4All(model_name=MODEL_NAME, model_path=MODEL_PATH, device="cuda", verbose=True, allow_download=False)
+# Create the global variable.
+model = None
 
+def get_llm_model():
+    """
+    Makes sure the model is only loaded into memory after the startup download.
+    """
+
+    global model
+
+    if model is None:
+        model = GPT4All(model_name=MODEL_NAME, model_path=MODEL_PATH, device="cuda", verbose=True, allow_download=False)
+    
+    return model
 
 async def generate_refined_prompt(user_input: str) -> str:
     """
-    Processes user input through the LLM to generate structured tags.
-    Returns only the content of the 'positive_prompt' key.
+    Processes user input through the LLM to generate structured tags. Returns only the content of the 'positive_prompt' 
+    key.
     """
 
-    with model.chat_session(system_prompt=INTERPRETER_DIRECTIVES):
-        response = model.generate(user_input, max_tokens=200)
+    # Pull the model instance on demand to ensure it's loaded after the startup event.
+    llm = get_llm_model()
+
+    with llm.chat_session(system_prompt=INTERPRETER_DIRECTIVES):
+        response = llm.generate(user_input, max_tokens=200)
         
     try:
-        # Parsing the JSON response to extract the prompt string
         data = json.loads(response)
         return data.get("positive_prompt", "")
     except json.JSONDecodeError:
-        # In case of malformed JSON, return the raw response for fallback
         return response
