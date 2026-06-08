@@ -3,6 +3,7 @@
  * Useful for local environments where 'localhost' and '127.0.0.1' might behave differently.
  */
 import axios from 'axios';
+import { GenerationResponse, StatusResponse } from '../types/JobResponse';
 
 const primary = import.meta.env.VITE_API_URL_PRIMARY;
 const secondary = import.meta.env.VITE_API_URL_SECONDARY;
@@ -25,3 +26,19 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+/**
+ * Workflow API services to interact with the FastAPI backend.
+ * Uses the established axios instance to benefit from the fallback logic.
+ */
+export const workflowApi = {
+  generate: async (prompt: string): Promise<GenerationResponse> => {
+    const response = await api.post<GenerationResponse>('/generate', { prompt });
+    return response.data;
+  },
+
+  getStatus: async (promptId: string): Promise<StatusResponse> => {
+    const response = await api.get<StatusResponse>(`/status/${promptId}`);
+    return response.data;
+  }
+};

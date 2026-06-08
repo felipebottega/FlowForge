@@ -1,0 +1,13 @@
+/* index.css - Global styles and Tailwind CSS directives */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Additional global overrides can be added here if needed */
+body {
+  @apply bg-zinc-950 text-zinc-100;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
