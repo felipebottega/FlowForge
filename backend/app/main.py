@@ -7,13 +7,28 @@ import httpx
 from tqdm import tqdm
 from fastapi import FastAPI
 from .api.endpoints import router as api_router
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI(title="FlowForge API")
+
+# Define the list of origins allowed to access the API, Usually http://localhost:5173 for Vite.
+origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+
+# Adding the middleware to the application.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"], # Allows all methods (GET, POST, etc.).
+    allow_headers=["*"], # Allows all headers.
+)
+
+# Include the routes (Router).
 app.include_router(api_router, prefix="/api")
 
 
-# Define internal paths relative to the project root directory
+# Define internal paths relative to the project root directory.
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", ".."))
 
