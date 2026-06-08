@@ -2,7 +2,7 @@
   
 # FlowForge
 
-[![Release](https://img.shields.io/badge/release-v0.1.0-orange)](https://github.com/felipebottega/FlowForge/releases)
+[![Release](https://img.shields.io/badge/release-v0.2.0-orange)](https://github.com/felipebottega/FlowForge/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-05998b?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
