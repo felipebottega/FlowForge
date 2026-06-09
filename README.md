@@ -20,7 +20,7 @@ FlowForge translates natural language into ComfyUI execution. It functions as an
 To try FlowForge, first clone this project to your local machine. After that, install the ComfyUI Window Portable version inside the project folder ([direct download link here](https://github.com/comfyanonymous/ComfyUI/releases/latest/download/ComfyUI_windows_portable_nvidia.7z)). The folder should have the structure shown below.
 
 <p align="center">
-  <img width="220" src="https://github.com/user-attachments/assets/c2ae86e2-49ea-42ca-a412-93bbdb1ed05b" />
+  <img width="240" src="https://github.com/user-attachments/assets/4c8b7419-96c6-4c71-98c4-a7979b269820" />
 </p>
 
 Finally, open the terminal in the folder location and run the following commands to install [FastAPI](https://fastapi.tiangolo.com/) and [gpt4all](https://pypi.org/project/gpt4all/):
