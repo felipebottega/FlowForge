@@ -32,8 +32,8 @@ api.interceptors.response.use(
  * Uses the established axios instance to benefit from the fallback logic.
  */
 export const workflowApi = {
-  generate: async (prompt: string, cfg: number): Promise<GenerationResponse> => {
-    const response = await api.post('/generate', { prompt, cfg });
+  generate: async (prompt: string, cfg: number, steps: number): Promise<GenerationResponse> => {
+    const response = await api.post('/generate', { prompt, cfg, steps });
     return response.data;
   },
 

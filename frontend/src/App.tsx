@@ -52,7 +52,7 @@ const App: React.FC = () => {
   /**
    * Initiates the forging process by sending the user prompt to the API.
    */
-  const handleForge = async (userPrompt: string, cfg: number) => {
+  const handleForge = async (userPrompt: string, cfg: number, steps: number) => {
     try {
       setLoading(true);
       setWorkflowStatus('processing');
@@ -60,7 +60,7 @@ const App: React.FC = () => {
       setRefinedPrompt(null);
       setErrorDetails(null);
 
-      const data = await workflowApi.generate(userPrompt, cfg);
+      const data = await workflowApi.generate(userPrompt, cfg, steps);
       setPromptId(data.prompt_id);
       setRefinedPrompt(data.refined_prompt);
     } catch (error) {

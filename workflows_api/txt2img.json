@@ -64,7 +64,7 @@
       "seed": 1234567890,
       "steps": 20,
       "cfg": 2,
-      "sampler_name": "euler_ancestral",
+      "sampler_name": "euler",
       "scheduler": "simple",
       "denoise": 1,
       "model": [

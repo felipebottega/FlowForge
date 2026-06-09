@@ -12,3 +12,4 @@ class WorkflowRequest(BaseModel):
     
     prompt: str
     cfg: float = 2.0
+    steps: int = 20

@@ -5,6 +5,7 @@ Handles workflow loading, prompt injection, and job submission.
 import os
 import json
 import httpx
+import random
 
 
 # Server configuration from repository constants
@@ -17,7 +18,7 @@ WORKFLOW_PATH = os.path.join(PROJECT_ROOT, "workflows_api", "txt2img.json")
 COMFY_OUTPUT_PATH = os.path.join(PROJECT_ROOT, "ComfyUI_windows_portable", "ComfyUI", "output")
 
 
-async def submit_workflow(prompt_text: str, cfg: float):
+async def submit_workflow(prompt_text: str, cfg: float, steps: int):
     """
     Loads the text-to-image workflow and submits it to the execution queue.
     """
@@ -34,6 +35,13 @@ async def submit_workflow(prompt_text: str, cfg: float):
 
     # Injects dynamic CFG into KSampler node.
     workflow["6"]["inputs"]["cfg"] = cfg
+
+    # Injects dynamic sampling steps into KSampler node.
+    workflow["6"]["inputs"]["steps"] = steps
+
+    # Generates a random seed compatible with the ComfyUI numeric format.
+    random_seed = random.randint(1, 1234567890)
+    workflow["6"]["inputs"]["seed"] = random_seed
 
     payload = {"prompt": workflow}
 
