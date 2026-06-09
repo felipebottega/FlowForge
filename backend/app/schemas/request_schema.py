@@ -7,7 +7,8 @@ from pydantic import BaseModel
 
 class WorkflowRequest(BaseModel):
     """
-    Defines the data contract for a generation request. Currently validates only the 'prompt' field.
+    Defines the data contract for a generation request.
     """
     
     prompt: str
+    cfg: float = 2.0

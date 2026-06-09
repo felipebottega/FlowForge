@@ -32,7 +32,7 @@ async def start_generation(request: WorkflowRequest):
          raise HTTPException(status_code=500, detail="Failed to structure the prompt in the LLM.")
 
     # Submit to ComfyUI.
-    response = await submit_workflow(refined_prompt)
+    response = await submit_workflow(refined_prompt, request.cfg)
     
     if "error" in response:
         raise HTTPException(status_code=500, detail=response["error"])

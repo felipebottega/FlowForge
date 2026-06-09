@@ -17,7 +17,7 @@ WORKFLOW_PATH = os.path.join(PROJECT_ROOT, "workflows_api", "txt2img.json")
 COMFY_OUTPUT_PATH = os.path.join(PROJECT_ROOT, "ComfyUI_windows_portable", "ComfyUI", "output")
 
 
-async def submit_workflow(prompt_text: str):
+async def submit_workflow(prompt_text: str, cfg: float):
     """
     Loads the text-to-image workflow and submits it to the execution queue.
     """
@@ -31,6 +31,9 @@ async def submit_workflow(prompt_text: str):
     # Injecting the prompt into the specified conditioning node. Maintaining the required aesthetic score prefixing.
     formatted_prompt = f"score_9, score_8_up, score_7_up, {prompt_text}"
     workflow["2"]["inputs"]["text"] = formatted_prompt
+
+    # Injects dynamic CFG into KSampler node.
+    workflow["6"]["inputs"]["cfg"] = cfg
 
     payload = {"prompt": workflow}
 
