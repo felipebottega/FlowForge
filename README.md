@@ -66,6 +66,7 @@ FlowForge operates on a robust data-flow cycle:
 - [x] Schema Design & Contract Definition
 - [x] LLM Prompt Engineering & Parser Logic
 - [x] Backend API (FastAPI) & Job Orchestration
-- [ ] ComfyUI Integration (Image/Video workflows)
-- [ ] React Interface (Chat/Preview/Download)
+- [x] ComfyUI Integration (Image workflows)
+- [ ] ComfyUI Integration (Video workflows)
+- [x] React Interface (Chat/Preview/Download)
 - [ ] Advanced Features: JSON Editor, A/B Variant Comparison, Auto-Correction
