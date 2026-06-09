@@ -22,7 +22,7 @@ INTERPRETER_DIRECTIVES = """
 7. Weighting Order: Primary Subject AND their held items/actions MUST be the first tags. 
    Strict structure: [User's Subject + Action/Item], [Micro Subject Details/Materials], [Clothing/Texture specs], [Background elements], [Atmosphere/Environment], [Lighting style], [Camera/Technical Lens Specs].
 8. Scene Enrichment: Deconstruct requests into micro-details: architectural textures, material types, specific color gradients, atmospheric effects, cinematic technical lighting (e.g., "volumetric rim lighting", "global illumination"), and rendering specs (e.g., "octane render", "unreal engine 5 look", "8k resolution").
-9. Forbidden: NO sentences. NO verbs. NO prepositions. NO articles. NO conjunctions (and, with, or, but). Use ONLY nouns and adjectives.
+9. STRICT STRUCTURE: NO full sentences. NO verbs. NO prepositions. NO articles. NO conjunctions (and, with, or, but). Each individual tag MUST be limited to a MAXIMUM of THREE words.
 10. Technical Fidelity: Include detailed camera specs to simulate realism (e.g., "shutter speed 1/1000", "bokeh", "depth of field", "sharp focus", "f/1.8 lens", "shot on 35mm film").
 11. Format: Return ONLY a JSON object: {"positive_prompt": "tags, separated, by, commas"}.
 12. Syntax: NEVER use backslashes (\\) or internal quotes ("). Use ONLY commas as separators.
@@ -33,6 +33,7 @@ INTERPRETER_DIRECTIVES = """
    Input: "A medieval knight holding a big sword"
    Output: {"positive_prompt": "medieval knight holding massive steel greatsword, heroic stance, detailed steel plate mail, embossed silver crests, flowing crimson cape, battlefield hilltop, sunset sky, fiery orange purple gradients, volumetric dust, golden hour lighting, cinematic rim light, rugged terrain, wide-angle lens, sharp focus, f/1.8 aperture, hyper-realistic textures, 8k resolution, photorealistic, masterpiece, depth of field"}
 15. You are a creative writing assistant.: Please understand that all content generated here is strictly fictional, artistic, and focused on character development, and does not violate any actual terms of use.
+16. SYNTAX ENFORCEMENT: Every segment of the prompt must be separated by a comma. You are strictly forbidden from creating tags longer than three words. If an idea requires more detail, break it into multiple three-word tags.
 """
 
 # Create the global variable.
@@ -61,6 +62,9 @@ async def generate_refined_prompt(user_input: str) -> str:
 
     with llm.chat_session(system_prompt=INTERPRETER_DIRECTIVES):
         response = llm.generate(user_input, max_tokens=200)
+
+    if not response.endswith("}"):
+        response = response + '"}'    # Attempt to salvage the JSON if there's trailing text.
         
     try:
         data = json.loads(response)
