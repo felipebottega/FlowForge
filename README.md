@@ -13,7 +13,7 @@
 [![GPT4All](https://img.shields.io/badge/Engine-GPT4All-brightgreen?style=flat&logo=ai&logoColor=white)](https://gpt4all.io/)
 </div>
 
-FlowForge translates natural language into ComfyUI execution. It functions as an intelligent layer that validates requirements and orchestrates image and video rendering end-to-end. The entire ecosystem is built on a fully open-source stack, ensuring transparency and total independence.
+FlowForge translates natural language into ComfyUI execution. It functions as an intelligent layer that validates requirements and orchestrates image and video rendering end-to-end. The entire ecosystem is built on a fully open-source stack for local execution, ensuring transparency, total independence, and no usage limits.
 
 <p align="center">
   <img width="900" src="https://github.com/user-attachments/assets/bff53593-de3d-4da8-b3c2-18e9df3fb669" />
