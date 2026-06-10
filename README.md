@@ -40,13 +40,6 @@ After setup, launch `run_flow_forge.bat`.
 
 Alternatively, you can download the standalone version of this project with everything already installed and ready to use [here](https://github.com/felipebottega/FlowForge/releases/tag/v0.1.0).
 
-## Core Philosophy
-This project was built to solve the "prototyping gap", where many AI implementations fail to move from a chat-interface demo to a reliable, production-ready system. FlowForge emphasizes:
-
-* **Structural Integrity:** Enforcing schema-first design to ensure reliable communication between LLMs and visual engines.
-* **Observability:** Treating media rendering as an asynchronous job, with clear state management, logging, and error handling.
-* **UX-First Engineering:** Providing a natural, conversational interface that abstracts the underlying complexity of node-based workflows without sacrificing control.
-
 ## System Architecture
 
 The system is decoupled into specialized layers, ensuring that business logic, orchestration, and execution remain distinct:
