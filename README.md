@@ -2,7 +2,7 @@
   
 # FlowForge
 
-[![Release](https://img.shields.io/badge/release-v0.2.0-orange)](https://github.com/felipebottega/FlowForge/releases)
+[![Release](https://img.shields.io/badge/release-v0.3.0-orange)](https://github.com/felipebottega/FlowForge/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-05998b?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
@@ -13,7 +13,11 @@
 [![GPT4All](https://img.shields.io/badge/Engine-GPT4All-brightgreen?style=flat&logo=ai&logoColor=white)](https://gpt4all.io/)
 </div>
 
-FlowForge translates natural language into ComfyUI execution. It functions as an intelligent layer that validates requirements and orchestrates image and video rendering end-to-end, removing manual bottlenecks.
+FlowForge translates natural language into ComfyUI execution. It functions as an intelligent layer that validates requirements and orchestrates image and video rendering end-to-end. The entire ecosystem is built on a fully open-source stack, ensuring transparency and total independence.
+
+<p align="center">
+  <img width="900" src="https://github.com/user-attachments/assets/bff53593-de3d-4da8-b3c2-18e9df3fb669" />
+</p>
 
 ## Installation
 
