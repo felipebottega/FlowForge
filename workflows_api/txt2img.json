@@ -1,7 +1,7 @@
 {
   "1": {
     "inputs": {
-      "ckpt_name": "CyberRealisticPony_V18.0_F16.safetensors"
+      "ckpt_name": "Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors"
     },
     "class_type": "CheckpointLoaderSimple",
     "_meta": {
@@ -37,7 +37,7 @@
   "4": {
     "inputs": {
       "lora_name": "zy_Realism_Enhancer_v2.safetensors",
-      "strength_model": 0.7,
+      "strength_model": 0.5,
       "model": [
         "1",
         0
@@ -64,7 +64,7 @@
       "seed": 1234567890,
       "steps": 20,
       "cfg": 2,
-      "sampler_name": "euler",
+      "sampler_name": "dpmpp_2m_sde",
       "scheduler": "simple",
       "denoise": 1,
       "model": [

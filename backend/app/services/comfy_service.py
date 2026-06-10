@@ -30,8 +30,7 @@ async def submit_workflow(prompt_text: str, cfg: float, steps: int):
         workflow = json.load(f)
 
     # Injecting the prompt into the specified conditioning node. Maintaining the required aesthetic score prefixing.
-    formatted_prompt = f"score_9, score_8_up, score_7_up, {prompt_text}"
-    workflow["2"]["inputs"]["text"] = formatted_prompt
+    workflow["2"]["inputs"]["text"] = prompt_text
 
     # Injects dynamic CFG into KSampler node.
     workflow["6"]["inputs"]["cfg"] = cfg

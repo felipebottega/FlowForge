@@ -40,7 +40,7 @@ MODEL_PATH = os.path.join(PROJECT_ROOT, "llm_models", MODEL_NAME)
 # Points to the directory where ComfyUI saves the outputs
 COMFY_OUTPUT_PATH = os.path.join(PROJECT_ROOT, "ComfyUI_windows_portable", "ComfyUI", "output")
 COMFYUI_MODELS_PATH = os.path.join(PROJECT_ROOT, "ComfyUI_windows_portable", "ComfyUI", "models")
-CHECKPOINT_PATH = os.path.join(COMFYUI_MODELS_PATH, "checkpoints", "CyberRealisticPony_V18.0_F16.safetensors")
+CHECKPOINT_PATH = os.path.join(COMFYUI_MODELS_PATH, "checkpoints", "Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors")
 LORA_PATH = os.path.join(COMFYUI_MODELS_PATH, "loras", "zy_Realism_Enhancer_v2.safetensors")
 
 # Mounts the output folder so files are accessible at http://localhost:8000/outputs/.
@@ -110,7 +110,7 @@ async def startup_event():
 
     download_missing_file(
         CHECKPOINT_PATH, 
-        "https://huggingface.co/cyberdelia/CyberRealisticPony/resolve/main/CyberRealisticPony_V18.0_F16.safetensors"
+        "https://huggingface.co/RunDiffusion/Juggernaut-XL-v9/resolve/main/Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors"
     )
 
     download_missing_file(

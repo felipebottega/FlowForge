@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react';
 import PromptForm from './components/PromptForm';
 import ImageCard from './components/ImageCard';
 import { workflowApi } from './services/api';
+import { version } from '../package.json'; // Import project version
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -76,10 +77,24 @@ const App: React.FC = () => {
       {/* Navigation Header */}
       <header className="border-b border-zinc-800 p-2 flex justify-between items-center bg-zinc-900/50 backdrop-blur-md sticky top-0 z-10">
         <div>
-          <h1 className="text-2xl font-bold tracking-tighter text-white">
-            FLOW<span className="text-blue-500">FORGE</span>
-          </h1>
-          <p className="text-xs text-zinc-500 uppercase tracking-widest">LLM Orchestrator for ComfyUI</p>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold tracking-tighter text-white">
+              FLOW<span className="text-blue-500">FORGE</span>
+            </h1>
+            <span className="text-[10px] text-zinc-500 font-mono mt-1">v{version}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <p className="text-xs text-zinc-500 uppercase tracking-widest">LLM Orchestrator for ComfyUI</p>
+            <span className="text-zinc-700">|</span>
+            <a 
+              href="https://github.com/felipebottega/FlowForge" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-[10px] text-blue-500 hover:underline"
+            >
+              GitHub Project
+            </a>
+          </div>        
         </div>
         <div className="flex items-center gap-3">
           <div className={`w-2 h-2 rounded-full ${
@@ -101,6 +116,13 @@ const App: React.FC = () => {
           errorDetails={errorDetails} 
         />
       </main>
+      
+      {/* Language usage disclaimer footer */}
+      <footer className="p-4 text-left opacity-40">
+        <p className="text-[10px] text-zinc-1 tracking-widest">
+          * You can write in any language, but you will get the most accurate results in English.
+        </p>
+      </footer>
     </div>
   );
 };
