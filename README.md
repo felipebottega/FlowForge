@@ -16,7 +16,7 @@
 FlowForge translates natural language into ComfyUI execution. It functions as an intelligent layer that validates requirements and orchestrates image and video rendering end-to-end. The entire ecosystem is built on a fully open-source stack for local execution, ensuring transparency, total independence, and no usage limits.
 
 <p align="center">
-  <img width="900" src="https://github.com/user-attachments/assets/bff53593-de3d-4da8-b3c2-18e9df3fb669" />
+  <img width="900" src="https://github.com/user-attachments/assets/f25c60b2-2dde-49eb-a839-6641cb70c416" />
 </p>
 
 ## Installation
