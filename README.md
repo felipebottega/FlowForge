@@ -22,6 +22,7 @@ FlowForge translates natural language into ComfyUI execution. It functions as an
 ## Installation
 
 To try FlowForge, first clone this project to your local machine. After that, install the ComfyUI Window Portable version inside the project folder ([direct download link here](https://github.com/comfyanonymous/ComfyUI/releases/latest/download/ComfyUI_windows_portable_nvidia.7z)). The folder should have the structure shown below.
+**Warning:** This project requires an NVIDIA GPU with CUDA support to run GPU acceleration.
 
 <p align="center">
   <img width="240" src="https://github.com/user-attachments/assets/4c8b7419-96c6-4c71-98c4-a7979b269820" />
@@ -38,7 +39,7 @@ Finally, open the terminal in the folder location and run the following commands
 
 After setup, launch `run_flow_forge.bat`.
 
-Alternatively, you can download the standalone version of this project with everything already installed and ready to use [here](https://github.com/felipebottega/FlowForge/releases/tag/v0.1.0).
+Alternatively, you can download the standalone version of this project with everything already installed and ready to use [here](https://github.com/felipebottega/FlowForge/releases/).
 
 ## System Architecture
 
