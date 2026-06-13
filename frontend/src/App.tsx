@@ -61,7 +61,7 @@ const App: React.FC = () => {
       setRefinedPrompt(null);
       setErrorDetails(null);
 
-      const data = await workflowApi.generate(userPrompt, cfg, steps);
+      const data = await workflowApi.image_generation(userPrompt, cfg, steps);
       setPromptId(data.prompt_id);
       setRefinedPrompt(data.refined_prompt);
     } catch (error) {

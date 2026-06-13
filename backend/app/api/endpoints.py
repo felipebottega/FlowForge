@@ -2,12 +2,11 @@ import os
 import httpx
 from fastapi import APIRouter, HTTPException
 from backend.app.schemas.request_schema import WorkflowRequest
-from backend.app.services.llm_service import generate_refined_prompt
+from backend.app.services.llm_service import orchestrator, generate_refined_prompt_for_image
 from backend.app.services.comfy_service import clear_output_directory, submit_workflow, COMFY_URL
 
 
 router = APIRouter()
-
 
 
 # Define internal paths relative to the project root directory.
@@ -16,8 +15,30 @@ PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
 COMFY_OUTPUT_PATH = os.path.join(PROJECT_ROOT, "ComfyUI_windows_portable", "ComfyUI", "output")
 
 
-@router.post("/generate")
-async def start_generation(request: WorkflowRequest):
+@router.post("/start_orchestrator")
+async def start_orchestrator(request: WorkflowRequest):
+    """
+    Receives the initial prompt and decides what should be done about it.
+    """
+
+    # Submit to the LLM.
+    response = await orchestrator(request.prompt)
+
+    print(f"[FlowForge] Orchestrator response: {response}")
+    
+    if "TEXT" in response:
+         print("[FlowForge] Orchestrator did not recognize a valid command in the response.")
+    elif "IMAGE" in response:
+        return await start_image_generation(request)
+    elif "VIDEO" in response:
+        print("[FlowForge] Video generation is not implemented yet.")
+    else:
+        print("[FlowForge] Orchestrator did not recognize a valid command in the response.")
+
+    return
+
+@router.post("/image_generation")
+async def start_image_generation(request: WorkflowRequest):
     """
     Receives the initial prompt, uses LLM to generate the technical tags, and submits the flow for execution in ComfyUI.
     """
@@ -26,7 +47,7 @@ async def start_generation(request: WorkflowRequest):
     clear_output_directory()
 
     # Refine prompt via LLM.
-    refined_prompt = await generate_refined_prompt(request.prompt)
+    refined_prompt = await generate_refined_prompt_for_image(request.prompt)
     
     if not refined_prompt:
          raise HTTPException(status_code=500, detail="Failed to structure the prompt in the LLM.")
