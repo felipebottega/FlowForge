@@ -3,7 +3,7 @@
  * Useful for local environments where 'localhost' and '127.0.0.1' might behave differently.
  */
 import axios from 'axios';
-import { GenerationResponse, StatusResponse } from '../types/JobResponse';
+import { OrchestratorResponse, StatusResponse } from '../types/JobResponse';
 
 const primary = import.meta.env.VITE_API_URL_PRIMARY;
 const secondary = import.meta.env.VITE_API_URL_SECONDARY;
@@ -32,7 +32,12 @@ api.interceptors.response.use(
  * Uses the established axios instance to benefit from the fallback logic.
  */
 export const workflowApi = {
-  image_generation: async (prompt: string, cfg: number, steps: number): Promise<GenerationResponse> => {
+  start_orchestrator: async (prompt: string, cfg: number, steps: number): Promise<OrchestratorResponse> => {
+    const response = await api.post('/start_orchestrator', { prompt, cfg, steps });
+    return response.data;
+  },
+
+  image_generation: async (prompt: string, cfg: number, steps: number): Promise<OrchestratorResponse> => {
     const response = await api.post('/image_generation', { prompt, cfg, steps });
     return response.data;
   },

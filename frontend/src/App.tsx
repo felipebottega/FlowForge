@@ -14,6 +14,8 @@ const App: React.FC = () => {
   const [workflowStatus, setWorkflowStatus] = useState<'idle' | 'processing' | 'finished' | 'error'>('idle');
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [refinedPrompt, setRefinedPrompt] = useState<string | null>(null);
+  const [assistantMessage, setAssistantMessage] = useState<string | null>(null);
+  const [responseType, setResponseType] = useState<'image' | 'text' | null>(null);
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
 
   /**
@@ -23,7 +25,7 @@ const App: React.FC = () => {
   useEffect(() => {
     let pollInterval: NodeJS.Timeout;
 
-    if (workflowStatus === 'processing' && promptId) {
+    if (workflowStatus === 'processing' && promptId && responseType === 'image') {
       pollInterval = setInterval(async () => {
         try {
           const data = await workflowApi.getStatus(promptId);
@@ -48,7 +50,7 @@ const App: React.FC = () => {
     return () => {
       if (pollInterval) clearInterval(pollInterval);
     };
-  }, [promptId, workflowStatus]);
+  }, [promptId, workflowStatus, responseType]);
 
   /**
    * Initiates the forging process by sending the user prompt to the API.
@@ -57,13 +59,24 @@ const App: React.FC = () => {
     try {
       setLoading(true);
       setWorkflowStatus('processing');
+      setPromptId(null);
       setImageUrl(null);
       setRefinedPrompt(null);
+      setAssistantMessage(null);
+      setResponseType(null);
       setErrorDetails(null);
 
-      const data = await workflowApi.image_generation(userPrompt, cfg, steps);
-      setPromptId(data.prompt_id);
-      setRefinedPrompt(data.refined_prompt);
+      const data = await workflowApi.start_orchestrator(userPrompt, cfg, steps);
+      setResponseType(data.response_type);
+
+      if (data.response_type === 'image') {
+        setPromptId(data.prompt_id);
+        setRefinedPrompt(data.refined_prompt);
+      } else {
+        setAssistantMessage(data.message);
+        setWorkflowStatus('finished');
+        setLoading(false);
+      }
     } catch (error) {
       console.error("Failed to initiate forge flow:", error);
       setWorkflowStatus('error');
@@ -112,6 +125,8 @@ const App: React.FC = () => {
         <ImageCard 
           imageUrl={imageUrl} 
           status={workflowStatus} 
+          responseType={responseType}
+          assistantMessage={assistantMessage}
           refinedPrompt={refinedPrompt}
           errorDetails={errorDetails} 
         />

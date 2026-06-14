@@ -25,7 +25,7 @@ const PromptForm: React.FC<PromptFormProps> = ({ onForge, isLoading }) => {
       <div className="relative w-full">
         <textarea
           className="w-full h-32 p-4 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-          placeholder="Describe the image you want to create..."
+          placeholder="Describe an image or ask a question..."
           value={text}
           onChange={(e) => setText(e.target.value)}
           disabled={isLoading}
@@ -100,7 +100,7 @@ const PromptForm: React.FC<PromptFormProps> = ({ onForge, isLoading }) => {
         disabled={isLoading || !text.trim()}
         className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-zinc-800 disabled:text-zinc-500 text-white font-bold rounded-lg transition-colors shadow-lg shadow-blue-900/20"
       >
-        {isLoading ? 'FORGING...' : 'FORGE IMAGE'}
+        {isLoading ? 'PROCESSING...' : 'SEND'}
       </button>
     </form>
   );

@@ -2,7 +2,7 @@ import os
 import httpx
 from fastapi import APIRouter, HTTPException
 from backend.app.schemas.request_schema import WorkflowRequest
-from backend.app.services.llm_service import orchestrator, generate_refined_prompt_for_image
+from backend.app.services.llm_service import orchestrator, generate_refined_prompt_for_image, generate_text_response
 from backend.app.services.comfy_service import clear_output_directory, submit_workflow, COMFY_URL
 
 
@@ -26,16 +26,27 @@ async def start_orchestrator(request: WorkflowRequest):
 
     print(f"[FlowForge] Orchestrator response: {response}")
     
-    if "TEXT" in response:
-         print("[FlowForge] Orchestrator did not recognize a valid command in the response.")
-    elif "IMAGE" in response:
-        return await start_image_generation(request)
-    elif "VIDEO" in response:
+    if response == "IMAGE_GENERATION":
+        image_response = await start_image_generation(request)
+        return {"response_type": "image", **image_response}
+    elif response == "TEXT_GENERATION":
+        text_response = await generate_text_response(request.prompt)
+        return {
+            "response_type": "text",
+            "message": text_response
+        }
+    elif response == "VIDEO_GENERATION":
         print("[FlowForge] Video generation is not implemented yet.")
+        return {
+            "response_type": "text",
+            "message": "Video generation is not implemented yet."
+        }
     else:
         print("[FlowForge] Orchestrator did not recognize a valid command in the response.")
-
-    return
+        return {
+            "response_type": "text",
+            "message": "I could not determine whether to generate text or an image."
+        }
 
 @router.post("/image_generation")
 async def start_image_generation(request: WorkflowRequest):
@@ -61,6 +72,7 @@ async def start_image_generation(request: WorkflowRequest):
     prompt_id = response.get("prompt_id")
     
     return {
+        "response_type": "image",
         "message": "Workflow submitted to the queue successfully",
         "prompt_id": prompt_id,
         "refined_prompt": refined_prompt

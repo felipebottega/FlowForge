@@ -6,45 +6,47 @@ import React from 'react';
 interface ImageCardProps {
   imageUrl: string | null;
   status: 'idle' | 'processing' | 'finished' | 'error';
+  responseType?: 'image' | 'text' | null;
+  assistantMessage?: string | null;
   refinedPrompt?: string | null;
   errorDetails?: string | null;
 }
 
-const ImageCard: React.FC<ImageCardProps> = ({ imageUrl, status, refinedPrompt, errorDetails }) => {
+const ImageCard: React.FC<ImageCardProps> = ({ imageUrl, status, responseType, assistantMessage, refinedPrompt, errorDetails }) => {
   if (status === 'idle') return null;
 
-    const handleDownload = async () => {
-        if (!imageUrl) return;
+  const handleDownload = async () => {
+    if (!imageUrl) return;
 
-        try {
-        // 1. Faz a requisição da imagem de forma assíncrona
-        const response = await fetch(imageUrl);
-        
-        // 2. Converte a resposta em um arquivo binário (Blob)
-        const blob = await response.blob();
-        
-        // 3. Cria uma URL local (mesma origem) temporária para esse Blob
-        const blobUrl = window.URL.createObjectURL(blob);
+    try {
+      // 1. Faz a requisição da imagem de forma assíncrona
+      const response = await fetch(imageUrl);
+      
+      // 2. Converte a resposta em um arquivo binário (Blob)
+      const blob = await response.blob();
+      
+      // 3. Cria uma URL local (mesma origem) temporária para esse Blob
+      const blobUrl = window.URL.createObjectURL(blob);
 
-        // 4. Cria o elemento <a> e dispara o clique
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = `flowforge-${Date.now()}.png`;
-        
-        // É necessário anexar o link ao body para funcionar corretamente no Firefox
-        document.body.appendChild(link);
-        link.click();
+      // 4. Cria o elemento <a> e dispara o clique
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = `flowforge-${Date.now()}.png`;
+      
+      // É necessário anexar o link ao body para funcionar corretamente no Firefox
+      document.body.appendChild(link);
+      link.click();
 
-        // 5. Limpeza de memória
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(blobUrl);
-        
-        } catch (error) {
-        console.error("Falha ao realizar o download da imagem:", error);
-        }
-    };
+      // 5. Limpeza de memória
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+      
+    } catch (error) {
+      console.error("Falha ao realizar o download da imagem:", error);
+    }
+  };
 
-    return (
+  return (
     <div className="w-full max-w-lg bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl transition-all relative">
       
       {/* Media Display Area */}
@@ -59,7 +61,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ imageUrl, status, refinedPrompt, 
         )}
 
         {/* Imagem Finalizada e Controles */}
-        {status === 'finished' && imageUrl && (
+        {status === 'finished' && responseType === 'image' && imageUrl && (
           <>
             <img src={`${imageUrl}?t=${new Date().getTime()}`} alt="Generated" className="w-full h-full object-cover" />
             
@@ -88,6 +90,19 @@ const ImageCard: React.FC<ImageCardProps> = ({ imageUrl, status, refinedPrompt, 
               </div>
             )}
           </>
+        )}
+
+        {status === 'finished' && responseType === 'text' && (
+          <div className="w-full h-full p-6 flex flex-col justify-center gap-4">
+            <div>
+              <p className="text-blue-400 font-mono text-xs uppercase tracking-[0.3em] mb-3">Chat response</p>
+              <div className="max-h-[calc(100%-2rem)] overflow-y-auto pr-2">
+                <p className="text-zinc-100 text-base leading-7 whitespace-pre-wrap">
+                  {assistantMessage || "No response was returned."}
+                </p>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Exibição de Erro */}
