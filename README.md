@@ -28,13 +28,13 @@ To try FlowForge, first clone this project to your local machine. After that, in
   <img width="240" src="https://github.com/user-attachments/assets/4c8b7419-96c6-4c71-98c4-a7979b269820" />
 </p>
 
-Finally, open the terminal in the folder location and run the following commands to install [FastAPI](https://fastapi.tiangolo.com/) and [gpt4all](https://pypi.org/project/gpt4all/):
-
+Finally, open the terminal in the folder location and run the following commands to install [FastAPI](https://fastapi.tiangolo.com/), [gpt4all](https://pypi.org/project/gpt4all/) and RAG dependencies:
 
 ```
 .\ComfyUI_windows_portable\python_embeded\python.exe -m pip install "fastapi[standard]"
 .\ComfyUI_windows_portable\python_embeded\python.exe -m pip install -U "gpt4all[cuda]"
 .\ComfyUI_windows_portable\python_embeded\python.exe -m pip install gpt4all requests
+.\ComfyUI_windows_portable\python_embeded\python.exe -m pip install sentence-transformers faiss-cpu
 ```
 
 FlowForge uses a React frontend and requires Node.js and npm to be installed on your system. You can download Node.js from: https://nodejs.org/. After installing Node.js, open a terminal in the project root and run:
@@ -67,6 +67,30 @@ FlowForge operates on a robust data-flow cycle:
 2.  **Schema Validation:** Pydantic models validate the structure before execution, preventing invalid workflows.
 3.  **Job Orchestration:** FastAPI dispatches jobs to ComfyUI, managing status updates via asynchronous queues.
 4.  **Feedback Loop:** Results are captured, logged, and surfaced to the UI with download capabilities.
+
+## RAG
+
+FlowForge also features a RAG layer to generate specialized prompts from the user's natural language prompt. It searches a vector database of high-quality prompts and injects the most relevant matches into the orchestration prompt, helping generate a better final prompt for image and video generation.
+
+```mermaid
+flowchart LR
+    A[User Prompt]
+    B[Embedding Model]
+    C[Vector Database]
+    D[Retrieved Examples]
+    E[Orchestrator]
+
+    A --> B
+    B --> C
+    C --> D
+
+    A --> E
+    D --> E
+
+    E --> F[Specialized Prompt]
+```
+
+By retrieving semantically similar examples from a curated prompt database, the RAG layer helps the orchestrator generate more accurate and specialized prompts than relying on the user's request alone.
 
 ## Roadmap
 - [x] Schema Design & Contract Definition
