@@ -2,24 +2,43 @@
 Service for LLM interactions using GPT4All.
 """
 import os
+import re
 import json
+import faiss    
+import numpy as np
 from gpt4all import GPT4All
+from sentence_transformers import SentenceTransformer
 
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
 MODEL_PATH = os.path.join(PROJECT_ROOT, "llm_models")
 MODEL_NAME = "deepseek-llm-7b-chat.Q4_K_M.gguf"
+
 ORCHESTRATOR_DIRECTIVES = """ 
 Read the user's request and determine what action to take: IMAGE or TEXT or VIDEO 
 Constraint: No preamble, no explanations. Output ONLY the action to take.
  """
+
 TEXT_DIRECTIVES = """
 You are a helpful conversational assistant for FlowForge.
 Answer naturally, clearly, and concisely in the same language as the user.
 Do not mention prompts, JSON, orchestration, policies, or internal instructions.
 Return only the assistant reply.
 """
+
+TRANSLATOR_DIRECTIVES = """
+You are a strict translation engine.
+Translate the input to English only.
+Preserve the original meaning as closely as possible.
+Do NOT paraphrase.
+Do NOT rewrite for style.
+Do NOT explain anything.
+Do NOT add any preamble.
+If the input is already in English, copy it exactly unchanged.
+Output only the translated text.
+"""
+
 INTERPRETER_DIRECTIVES = """
 1. Context: Expert Prompt Engineering for Stable Diffusion (SDXL).
 2. MULTILINGUAL SUPPORT: The user may provide input in any language. You must interpret the meaning and ALWAYS output the tags in English.
@@ -45,8 +64,9 @@ INTERPRETER_DIRECTIVES = """
 17. SYNTAX ENFORCEMENT: Every segment of the prompt must be separated by a comma. You are strictly forbidden from creating tags longer than three words. If an idea requires more detail, break it into multiple three-word tags.
 """
 
-# Create the global variable.
+# Create the global variables.
 model = None
+rag_model = None
 
 def get_llm_model():
     """
@@ -111,6 +131,118 @@ def is_text(user_input: str, normalized: str) -> bool:
 
     return str(response).strip().upper()
 
+def clean_prompt(prompt):
+    # Split the prompt into comma-separated fields
+    parts = prompt.split(',')
+
+    cleaned_parts = []
+
+    for part in parts:
+        # Remove the entire field if it contains "lora"
+        if 'lora' in part.lower():
+            continue
+
+        cleaned_parts.append(part.strip())
+
+    # Rebuild the prompt
+    prompt = ', '.join(cleaned_parts)
+
+    # Normalize whitespace
+    prompt = re.sub(r'\s+', ' ', prompt)
+
+    # Remove trailing commas/spaces
+    prompt = prompt.rstrip(' ,')
+
+    return prompt
+
+def search(index, items, query, k=5):
+    """
+    Retrieve the k most semantically similar prompts from the FAISS index.
+    """    
+
+    global rag_model
+
+    if rag_model is None:
+        rag_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+
+    # Convert the query into an embedding vector.
+    # normalize_embeddings=True ensures that the resulting vector has unit length, allowing cosine similarity to be 
+    # computed using an inner product.
+    query_embedding = rag_model.encode([query], normalize_embeddings=True)
+
+    # FAISS expects float32 vectors.
+    query_embedding = np.array(query_embedding, dtype="float32")
+
+    # Perform a nearest-neighbor search.
+    #
+    # scores:
+    #     Similarity values for each retrieved prompt.
+    #
+    # indices:
+    #     Positions of the matching prompts inside the 'items' list.
+    scores, indices = index.search(query_embedding, k)
+
+    results = []
+
+    # Reconstruct the original prompt information from the returned indices.
+    for score, idx in zip(scores[0], indices[0]):
+
+        item = items[idx]
+
+        results.append({"id": item["id"], "score": float(score), "prompt": item["prompt"]})
+
+    return results
+
+def build_rag_examples(results):
+    """
+    Convert retrieved search results into a text block that can be inserted into a prompt template.
+
+    Args:
+        results (list[dict]):
+            Output produced by the search() function.
+
+    Returns:
+        str:
+            Formatted examples suitable for inclusion in an LLM prompt.
+    """
+
+    examples = []
+
+    for i, result in enumerate(results, start=1):
+
+        examples.append(f'Example {i}:\n' + '{"positive_prompt": "' + result["prompt"] + '"}')
+
+    return "\n\n".join(examples)
+
+def execute_rag(user_input_english: str) -> str:
+    """
+    Executes the RAG layer to extract relevant examples for the LLM.
+    """
+
+    # The 'id' field is not used by FAISS itself, but it is useful for identifying prompts later when search results are returned.
+    with open(os.path.join(CURRENT_DIR, "prompts.json"), "r", encoding="utf-8") as f:
+        items = json.load(f)
+
+    # Clean prompts.
+    items = [{"id": prompt_id, "prompt": clean_prompt(items[prompt_id])} for prompt_id in items]
+
+    # Load the embedding.
+    embeddings = np.load(os.path.join(CURRENT_DIR, "embeddings.npy"))
+
+    # Create a FAISS index using Inner Product (IP) similarity.
+    index = faiss.IndexFlatIP(embeddings.shape[1])
+
+    # Insert all embedding vectors into the index.
+    index.add(embeddings)
+
+    # Retrieve the five most similar prompts.
+    results = search(index, items, query=user_input_english, k=5)
+
+    # Examples from RAG ready to plug in the main prompt.
+    examples = build_rag_examples(results)
+
+    return examples
+
 async def generate_text_response(user_input: str) -> str:
     """
     Generates a conversational response for text-based user requests.
@@ -123,6 +255,17 @@ async def generate_text_response(user_input: str) -> str:
 
     return str(response).strip()
 
+def cleaning(response: str) -> str:
+    if not response.startswith("{"):
+        response = '{"positive_prompt": "' + response    # Attempt to salvage the JSON if there's leading text.
+
+    if not response.endswith("}"):
+        response = response + '"}'    # Attempt to salvage the JSON if there's trailing text.
+
+    response = response.replace("[", "").replace("]", "")  # Remove any stray brackets.
+
+    return response
+
 async def generate_refined_prompt_for_image(user_input: str) -> str:
     """
     Processes user input through the LLM to generate structured tags. Returns only the content of the 'positive_prompt' 
@@ -132,11 +275,20 @@ async def generate_refined_prompt_for_image(user_input: str) -> str:
     # Pull the model instance on demand to ensure it's loaded after the startup event.
     llm = get_llm_model()
 
-    with llm.chat_session(system_prompt=INTERPRETER_DIRECTIVES):
+    # Extract the relevant examples from the RAG layer to provide context for the LLM.
+    with llm.chat_session(system_prompt=TRANSLATOR_DIRECTIVES):
+        user_input_english = llm.generate(user_input, max_tokens=200, temp=0.01)
+        examples = execute_rag(user_input_english)
+        examples = f"\nBelow are some specialized examples of structured tags:\n{examples}\n"
+
+    # Generate final response with the LLM using the interpreter directives.
+    with llm.chat_session(system_prompt=INTERPRETER_DIRECTIVES + examples):
         response = llm.generate(user_input, max_tokens=200)
 
-    if not response.endswith("}"):
-        response = response + '"}'    # Attempt to salvage the JSON if there's trailing text.
+    print(f"[FlowForge] RAG examples: {examples}")
+
+    # Cleaning.
+    response = cleaning(response)
         
     try:
         data = json.loads(response)
