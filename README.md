@@ -37,7 +37,7 @@ Finally, open the terminal in the folder location and run the following commands
 .\ComfyUI_windows_portable\python_embeded\python.exe -m pip install gpt4all requests
 ```
 
-FlowForge uses a React frontend and requires Node.js and npm to be installed on your system. You can download Node.js from: [https://nodejs.org/]. After installing Node.js, open a terminal in the project root and run:
+FlowForge uses a React frontend and requires Node.js and npm to be installed on your system. You can download Node.js from: https://nodejs.org/. After installing Node.js, open a terminal in the project root and run:
 
 ```
 cd frontend
