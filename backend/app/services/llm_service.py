@@ -256,6 +256,10 @@ async def generate_text_response(user_input: str) -> str:
     return str(response).strip()
 
 def cleaning(response: str) -> str:
+    """
+    Cleans the LLM response to ensure it adheres to the expected JSON structure.
+    """
+
     if not response.startswith("{"):
         response = '{"positive_prompt": "' + response    # Attempt to salvage the JSON if there's leading text.
 
