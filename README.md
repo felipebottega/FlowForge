@@ -61,13 +61,6 @@ The system is decoupled into specialized layers, ensuring that business logic, o
 | **ComfyUI** | Node-based Pipeline Execution | Real-world Generative Integration |
 | **Storage** | Outputs, Logs, Metadata | Auditability & History Tracking |
 
-## Technical Implementation
-FlowForge operates on a robust data-flow cycle:
-1.  **Intent Parsing:** A specialized LLM chain transforms unstructured text into a structured JSON contract.
-2.  **Schema Validation:** Pydantic models validate the structure before execution, preventing invalid workflows.
-3.  **Job Orchestration:** FastAPI dispatches jobs to ComfyUI, managing status updates via asynchronous queues.
-4.  **Feedback Loop:** Results are captured, logged, and surfaced to the UI with download capabilities.
-
 ## RAG
 
 FlowForge also features a RAG (*Retrieval-Augmented Generation*) layer to generate specialized prompts from the user's natural language prompt. It searches a vector database of high-quality prompts and injects the most relevant matches into the orchestration prompt, helping generate a better final prompt for image and video generation.
