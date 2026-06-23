@@ -70,7 +70,7 @@ FlowForge operates on a robust data-flow cycle:
 
 ## RAG
 
-FlowForge also features a RAG layer to generate specialized prompts from the user's natural language prompt. It searches a vector database of high-quality prompts and injects the most relevant matches into the orchestration prompt, helping generate a better final prompt for image and video generation.
+FlowForge also features a RAG (*Retrieval-Augmented Generation*) layer to generate specialized prompts from the user's natural language prompt. It searches a vector database of high-quality prompts and injects the most relevant matches into the orchestration prompt, helping generate a better final prompt for image and video generation.
 
 ```mermaid
 flowchart LR
