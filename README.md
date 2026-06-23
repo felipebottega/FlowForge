@@ -28,7 +28,7 @@ To try FlowForge, first clone this project to your local machine. After that, in
   <img width="240" src="https://github.com/user-attachments/assets/4c8b7419-96c6-4c71-98c4-a7979b269820" />
 </p>
 
-Finally, open the terminal in the folder location and run the following commands to install [FastAPI](https://fastapi.tiangolo.com/), [gpt4all](https://pypi.org/project/gpt4all/) and RAG dependencies:
+Finally, open the terminal in the folder location and run the following commands to install [FastAPI](https://fastapi.tiangolo.com/), [gpt4all](https://pypi.org/project/gpt4all/) and dependencies to use RAG (*Retrieval-Augmented Generation*):
 
 ```
 .\ComfyUI_windows_portable\python_embeded\python.exe -m pip install "fastapi[standard]"
